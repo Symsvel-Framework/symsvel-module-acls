@@ -9,12 +9,12 @@
     },
     "autoload": {
         "psr-4": {
-            "SymSvel\\Module\\Acls\\": "back/src/"
+            "SymSvel\\Module\\SymsvelModuleAcls\\": "back/src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "SymSvel\\Module\\Acls\\Tests\\": "back/tests/"
+            "SymSvel\\Module\\SymsvelModuleAcls\\Tests\\": "back/tests/"
         }
     },
     "require-dev": {
