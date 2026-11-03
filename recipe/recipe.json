@@ -1,0 +1,30 @@
+{
+    "manifests": {
+        "symsvel-framework/module-symsvel-module-acls": {
+            "manifest": {
+                "bundles": {
+                    "SymSvel\\Module\\SymsvelModuleAcls\\SymsvelModuleAclsBundle": [
+                        "all"
+                    ]
+                },
+                "copy-from-recipe": {
+                    "config/": "%CONFIG_DIR%/"
+                }
+            },
+            "files": {
+                "config/routes/symsvel-module-acls.yaml": {
+                    "contents": [
+                        "symsvel-module-acls:",
+                        "    resource:",
+                        "        path: '@SymsvelModuleAclsBundle/src/Controller/'",
+                        "        namespace: SymSvel\\Module\\SymsvelModuleAcls\\Controller",
+                        "    type: attribute",
+                        ""
+                    ],
+                    "executable": false
+                }
+            },
+            "ref": "REPLACE_WITH_RECIPE_COMMIT_SHA"
+        }
+    }
+}
