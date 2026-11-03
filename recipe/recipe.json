@@ -1,9 +1,9 @@
 {
     "manifests": {
-        "symsvel-framework/module-symsvel-module-acls": {
+        "symsvel-framework/module-acls": {
             "manifest": {
                 "bundles": {
-                    "SymSvel\\Module\\SymsvelModuleAcls\\SymsvelModuleAclsBundle": [
+                    "SymSvel\\Module\\Acls\\AclsBundle": [
                         "all"
                     ]
                 },
@@ -12,12 +12,12 @@
                 }
             },
             "files": {
-                "config/routes/symsvel-module-acls.yaml": {
+                "config/routes/acls.yaml": {
                     "contents": [
-                        "symsvel-module-acls:",
+                        "acls:",
                         "    resource:",
-                        "        path: '@SymsvelModuleAclsBundle/src/Controller/'",
-                        "        namespace: SymSvel\\Module\\SymsvelModuleAcls\\Controller",
+                        "        path: '@AclsBundle/src/Controller/'",
+                        "        namespace: SymSvel\\Module\\Acls\\Controller",
                         "    type: attribute",
                         ""
                     ],

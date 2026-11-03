@@ -1,6 +1,6 @@
 {
     "schema": 1,
-    "name": "SymsvelModuleAcls",
+    "name": "Acls",
     "dependencies": {},
     "tables": [],
     "components": {

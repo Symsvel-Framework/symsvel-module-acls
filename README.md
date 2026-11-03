@@ -1,3 +1,3 @@
-# SymsvelModuleAcls
+# Acls
 
 Module SymSvel (manifest schema 1).
