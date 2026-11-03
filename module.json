@@ -1,8 +1,8 @@
 {
     "schema": 1,
-    "name": "SymsvelModuleAcls",
-    "dependencies": {},
-    "tables": [],
+    "name": "Acls",
+    "dependencies": {"symsvel-framework/module-roles": "^1.0"},
+    "tables": ["symsvel_acls"],
     "components": {
         "back": "back",
         "bo": "bo"
