@@ -2,10 +2,11 @@
     "schema": 1,
     "name": "Acls",
     "dependencies": {},
-    "tables": [],
+    "tables": [
+        "symsvel_acl_rules"
+    ],
     "components": {
-        "back": "back",
-        "bo": "bo"
+        "back": "back"
     },
     "documentation": {
         "dev": "docs/dev",
