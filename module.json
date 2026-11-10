@@ -6,7 +6,10 @@
         "symsvel_acl_rules"
     ],
     "components": {
-        "back": "back"
+        "back": "back",
+        "bo": "bo",
+        "app": "app",
+        "front": "front"
     },
     "documentation": {
         "dev": "docs/dev",
