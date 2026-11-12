@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'symsvel_acl_rules')]
+#[ORM\UniqueConstraint(name: 'uniq_symsvel_acl_rule', columns: ['resource', 'action', 'role_code'])]
 class AclRule
 {
     #[ORM\Id]
@@ -18,7 +19,7 @@ class AclRule
     #[ORM\Column(length: 150)] private string $resource;
     #[ORM\Column(length: 100)] private string $action;
     #[ORM\Column(name: 'role_code', length: 100)] private string $roleCode;
-    #[ORM\Column] private bool $allowed;
+    #[ORM\Column(options: ['default' => false])] private bool $allowed;
 
     public function __construct(string $resource, string $action, string $roleCode, bool $allowed = false)
     {
