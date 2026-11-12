@@ -21,3 +21,7 @@ La source `Migration/001_acls.php` définit désormais la structure de table ave
 Les opérations de création/suppression de table sont uniquement déclaratives ; elles ne produisent pas encore de SQL via le compilateur actuel.
 
 À vérifier sur un **XT réinitialisé**, sans aucune réparation locale : compilation, exécution, tables réellement présentes, index, rôles système, état du Setup et diagnostic/rollback en cas d'échec. Toute correction devra se faire dans le framework et être documentée avec tests et CI.
+
+## Cohérence ORM et migrations Doctrine (novembre 2026)
+
+Les métadonnées ORM déclarent explicitement `uniq_symsvel_acl_rule` sur `(resource, action, role_code)` et `allowed DEFAULT false`, conformément à la migration Schema initiale immuable. Cette cohérence évite que `make:migration` propose de supprimer les contraintes ou valeurs par défaut des modules natifs dans les projets utilisateurs. Ne pas réécrire la migration initiale déjà publiée. Validation attendue : CI, puis `make:migration` sur une installation XT avec les modules migrés, en vérifiant l'absence de SQL parasite sur leurs tables.
