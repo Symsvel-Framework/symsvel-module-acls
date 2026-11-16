@@ -37,3 +37,10 @@ La CI affiche les raisons des tests PHPUnit ignorés avec `--display-skipped` (d
 Conformément aux décisions XCore/SymSvel : `ROLE_DEV` contourne tous les ACL ; `ROLE_SUPER_ADMIN` a accès aux opérations **fonctionnelles** mais pas automatiquement aux opérations marquées `technical = true` ; les autres rôles dépendent uniquement de leurs autorisations explicites. Le type d'opération est fourni par le module appelant, sans introduire de flag persistant ni redéfinir l'architecture existante. L'auteur de la requête doit d'abord être authentifié : **ce service ne réalise pas l'authentification**.
 
 Contrôles unitaires SQLite : privilèges natifs, exceptions techniques, refus par défaut, règles autorisées et refus explicites. CI et crash-tests du projet assemblé à confirmer.
+
+## Contrat de contrôle d'accès BO pour les modules (16/11/2026)
+
+Le contrat \`Access\BoAccessGate\` reçoit la requête, la ressource et l'action d'un endpoint BO, puis rend une \`BoAccessDecision\` : 200 avec l'identifiant/rôle de l'acteur authentifié, 401 si la session BO est invalide, 403 si l'ACL refuse. Les comptes, tokens et vérifications de session restent la responsabilité d'Admins/Auth. Le contrat ne dépend donc d'aucun module d'identité, évitant tout cycle Composer entre Settings, Auth, Admins et Users.
+
+L'implémentation concrète est enregistrée par le module Admins obligatoire et utilise les mécanismes existants \`AuthenticatedTokenResolver\`, \`AdminRepository\` et \`AclAuthorizer\`. Aucun bypass : un module consommateur doit systématiquement appeler \`check()\` avant lecture ou mutation et retourner une réponse sans cache. Il n'y a pas de rôle implicite supplémentaire. Tests du contrat et des contrôles réalisés côté propriétaire Admins, CI et CT à valider.
+
