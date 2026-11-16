@@ -93,3 +93,13 @@ absent restent en base, sans perte silencieuse. Le rôle de l'acteur ne peut
 pas être réécrit par lui-même via l'API ACLs (sauf développeur), même si
 `acls:manage` lui a été explicitement accordé. L'API valide ces règles
 avant toute modification des droits. Aucun nouveau schéma SQL.
+
+
+### QA BO assemblée (16/11/2026)
+
+La CI possède un job indépendant `bo-integration`, qui importe les
+routes Svelte et les fichiers du module dans le BO hôte `dev` selon
+la structure de synchronisation Tooling. Les validations TypeScript,
+Svelte, Prettier, ESLint, build statique et Vitest s'exécutent sur
+l'assemblage, pas uniquement sur un fichier isolé. Le crash-test XT
+reste nécessaire pour les API, les ACL et la navigation réelle.
