@@ -146,3 +146,12 @@ de la migration additive. L'entité `AclLabelOverride` déclare les métadonnée
 ORM équivalentes à la table Schema (clé composite `resource/action`, sans
 identifiant inventé) afin de limiter les diffs `make:migration` parasites.
 Les mutations métier continuent à passer par le manager DBAL du module.
+
+
+### Validation des payloads JSON (16/11/2026)
+
+L'API rejette les permissions non textuelles (objets/tableaux JSON), les
+doublons et les codes non déclarés **avant** d'effectuer la moindre écriture.
+Le gestionnaire n'applique pas `array_unique` à des entrées hétérogènes :
+il retourne une erreur de validation plutôt qu'une exception PHP inattendue.
+Test d'intégration de payload non scalaire ajouté.

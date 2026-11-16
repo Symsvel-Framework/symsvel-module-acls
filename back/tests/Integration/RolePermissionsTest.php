@@ -48,6 +48,12 @@ final class RolePermissionsTest extends TestCase
         } catch (\InvalidArgumentException) {
             self::assertSame(['admins.list', 'roles.assign:ROLE_ADMIN'], $manager->granted('ROLE_EDITOR'));
         }
+        try {
+            $manager->replace('ROLE_EDITOR', [['array' => 'not-a-permission']]);
+            self::fail('Non-string permission was accepted.');
+        } catch (\InvalidArgumentException) {
+            self::assertSame(['admins.list', 'roles.assign:ROLE_ADMIN'], $manager->granted('ROLE_EDITOR'));
+        }
         $manager->replace('ROLE_EDITOR', []);
         self::assertSame([], $manager->granted('ROLE_EDITOR'));
         self::assertFalse((new AclAuthorizer($db))->allows('ROLE_EDITOR', 'admins', 'list'));

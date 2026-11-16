@@ -44,14 +44,17 @@ final readonly class RolePermissionManager
         if (in_array($roleCode, ['ROLE_DEV', 'ROLE_SUPER_ADMIN', 'ROLE_USER'], true)) {
             throw new \DomainException('Implicit or App-only native role grants are immutable.');
         }
-        if (count($codes) > 500 || count($codes) !== count(array_unique($codes))) {
+        if (count($codes) > 500) {
             throw new \InvalidArgumentException('Invalid permission selection.');
         }
         $selected = [];
+        $seen = [];
         foreach ($codes as $code) {
-            if (!is_string($code) || ($definition = $this->catalog->get($code)) === null) {
-                throw new \InvalidArgumentException('Unknown ACL permission.');
+            if (!is_string($code) || isset($seen[$code])
+                || ($definition = $this->catalog->get($code)) === null) {
+                throw new \InvalidArgumentException('Unknown or duplicate ACL permission.');
             }
+            $seen[$code] = true;
             $selected[] = $definition;
         }
 
