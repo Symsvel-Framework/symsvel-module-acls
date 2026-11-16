@@ -54,10 +54,10 @@ opérations réelles (`resource`, `action`, libellé, caractère technique).
 `symsvel.acls.permission_provider`, refuse les doublons et ne scanne pas
 les routes. Le code d'affichage d'un droit est `resource.action` ;
 l'autorisation runtime reste basée sur `AclAuthorizer` et sur la table
-immuable `symsvel_acl_rules`. Les libellés appartiennent aux providers,
-non à une table d'édition utilisateur : contrairement à l'ancien écran
-XCore, il n'existe donc pas de modification d'un libellé de droit technique
-sans modifier la déclaration du module propriétaire.
+immuable `symsvel_acl_rules`. Les codes et les libellés par défaut
+appartiennent aux providers ; les administrateurs autorisés peuvent
+personnaliser les libellés affichés grâce à une surcharge distincte,
+sans modifier la définition technique du module.
 
 Routes BO, toutes protégées par `BoAccessGate` :
 

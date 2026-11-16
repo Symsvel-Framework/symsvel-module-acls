@@ -15,10 +15,9 @@ Le choix d'un rôle charge ses affectations explicites ; les boutons
 Les droits natifs du développeur et du super administrateur sont présentés
 comme hérités, jamais comme des lignes modifiables. Les mutations exigent
 l'autorisation technique `acls.manage`, et restent contrôlées par l'API.
-Les libellés proviennent du module propriétaire et ne sont pas éditables
-par l'administrateur : c'est une différence voulue avec le prototype XCore,
-car un label déclaré par un module ne doit pas être modifié globalement
-sans contrat de traduction. CI BO et CT XT requis.
+Les libellés par défaut proviennent du module propriétaire. Comme dans
+XCore, ils peuvent être personnalisés par un acteur autorisé sans changer
+le code ni le caractère technique de la permission. CI BO et CT XT requis.
 
 
 ### Modification du libellé d'une permission
