@@ -74,3 +74,12 @@ jamais accordée. Le développeur conserve tous les droits et le super-admin
 ses droits fonctionnels, mais ne contourne pas la protection technique
 des mutations ACL. On ne réécrit aucune migration déjà distribuée.
 Validation prévue par PHPUnit/CI, assemblage BO puis CT XT.
+
+
+### Métadonnées de l'écran ACLs (16/11/2026)
+
+La réponse du catalogue comprend `can_manage`, calculé en backend avec
+`acls:manage` **technique**. L'interface le présente comme indication UX
+mais les requêtes PUT sont revérifiées indépendamment. Les actions
+`assign:ROLE_*` acceptent les majuscules propres aux codes de rôle ;
+une définition malformée reste rejetée à la construction du catalogue.

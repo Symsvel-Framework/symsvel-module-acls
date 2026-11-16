@@ -26,7 +26,10 @@ final readonly class BoAclController
     public function catalog(Request $request): JsonResponse
     {
         if (($error = $this->readCheck($request)) !== null) return $error;
-        return self::respond(['data' => array_map(static fn ($permission) => [
+        $decision = $this->gate->check($request, 'acls', 'manage');
+        $canManage = $decision->allowed()
+            && $this->authorizer->allows((string) $decision->roleCode, 'acls', 'manage', true);
+        return self::respond(['can_manage' => $canManage, 'data' => array_map(static fn ($permission) => [
             'code' => $permission->code(),
             'resource' => $permission->resource,
             'action' => $permission->action,

@@ -14,7 +14,7 @@ final readonly class PermissionDefinition
         public bool $technical = false,
     ) {
         if (!preg_match('/^[a-z][a-z0-9_-]*$/D', $resource) || strlen($resource) > 150
-            || !preg_match('/^[a-z][a-z0-9_:-]*$/D', $action) || strlen($action) > 100
+            || !preg_match('/^[a-z][A-Za-z0-9_:-]*$/D', $action) || strlen($action) > 100
             || trim($label) === '' || strlen($label) > 150) {
             throw new \InvalidArgumentException('Invalid ACL permission definition.');
         }
