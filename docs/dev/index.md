@@ -83,3 +83,13 @@ La réponse du catalogue comprend `can_manage`, calculé en backend avec
 mais les requêtes PUT sont revérifiées indépendamment. Les actions
 `assign:ROLE_*` acceptent les majuscules propres aux codes de rôle ;
 une définition malformée reste rejetée à la construction du catalogue.
+
+
+### Préservation des droits d'un module absent et anti-escalade (16/11/2026)
+
+Un remplacement ne modifie que les permissions déclarées dans le catalogue
+actuellement disponible. Les règles d'un module désinstallé/temporairement
+absent restent en base, sans perte silencieuse. Le rôle de l'acteur ne peut
+pas être réécrit par lui-même via l'API ACLs (sauf développeur), même si
+`acls:manage` lui a été explicitement accordé. L'API valide ces règles
+avant toute modification des droits. Aucun nouveau schéma SQL.

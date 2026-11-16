@@ -59,6 +59,9 @@ final readonly class BoAclController
     {
         $decision = $this->gate->check($request, 'acls', 'manage');
         if (!$decision->allowed()) return self::failure($decision->status);
+        // Except for the developer, never let an actor rewrite their own
+        // explicit grants, which would allow escalating into other resources.
+        if ($decision->roleCode === $code && $code !== 'ROLE_DEV') return self::failure(403);
         // The technical flag is never bypassed by SUPER_ADMIN's functional privilege.
         if (!$this->authorizer->allows((string) $decision->roleCode, 'acls', 'manage', true)) {
             return self::failure(403);

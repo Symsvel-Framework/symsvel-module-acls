@@ -56,7 +56,15 @@ final readonly class RolePermissionManager
         }
 
         $this->db->transactional(function () use ($roleCode, $selected): void {
-            $this->db->delete('symsvel_acl_rules', ['role_code' => $roleCode]);
+            // Preserve grants owned by modules not currently present in this
+            // catalog. Replacing visible rights must never erase their data.
+            foreach ($this->catalog->all() as $known) {
+                $this->db->delete('symsvel_acl_rules', [
+                    'role_code' => $roleCode,
+                    'resource' => $known->resource,
+                    'action' => $known->action,
+                ]);
+            }
             foreach ($selected as $permission) {
                 $this->db->insert('symsvel_acl_rules', [
                     'role_code' => $roleCode,
