@@ -155,3 +155,10 @@ doublons et les codes non déclarés **avant** d'effectuer la moindre écriture.
 Le gestionnaire n'applique pas `array_unique` à des entrées hétérogènes :
 il retourne une erreur de validation plutôt qu'une exception PHP inattendue.
 Test d'intégration de payload non scalaire ajouté.
+
+
+### Correctif de test des métadonnées ORM (16/11/2026)
+
+La lecture des attributs de `AclLabelOverride` dans PHPUnit passe désormais
+par un vrai `EntityManager` SQLite en mémoire, afin d'initialiser correctement
+la réflexion de `ClassMetadata` sous Doctrine ORM 3. Aucun accès à XT.

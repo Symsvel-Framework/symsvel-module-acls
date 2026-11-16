@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace SymSvel\Module\Acls\Tests\Unit;
 
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMSetup;
 use PHPUnit\Framework\TestCase;
 use SymSvel\Module\Acls\Entity\AclLabelOverride;
 
@@ -12,11 +14,13 @@ final class AclLabelOverrideTest extends TestCase
 {
     public function testMappingsUseCompositePrimaryKeyWithoutInventedId(): void
     {
-        $metadata = new ClassMetadata(AclLabelOverride::class);
-        $driver = new \Doctrine\ORM\Mapping\Driver\AttributeDriver([
+        if (!extension_loaded('pdo_sqlite')) self::markTestSkipped('pdo_sqlite required.');
+        $config = ORMSetup::createAttributeMetadataConfiguration([
             dirname((new \ReflectionClass(AclLabelOverride::class))->getFileName()),
-        ]);
-        $driver->loadMetadataForClass(AclLabelOverride::class, $metadata);
+        ], true);
+        $config->enableNativeLazyObjects(true);
+        $manager = new EntityManager(DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true]), $config);
+        $metadata = $manager->getClassMetadata(AclLabelOverride::class);
         self::assertSame('symsvel_acl_labels', $metadata->getTableName());
         self::assertEqualsCanonicalizing(['resource', 'action'], $metadata->getIdentifierFieldNames());
         self::assertSame(150, $metadata->getFieldMapping('resource')->length);
