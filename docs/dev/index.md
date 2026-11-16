@@ -29,3 +29,11 @@ Les métadonnées ORM déclarent explicitement `uniq_symsvel_acl_rule` sur `(res
 ### Visibilité des tests ignorés
 
 La CI affiche les raisons des tests PHPUnit ignorés avec `--display-skipped` (directement ou via le script Composer QA). Un test ignoré ne devient pas bloquant pour autant : les motifs sont examinés pour distinguer prérequis absents et couverture manquante.
+
+## Contrôle d'accès opérationnel par rôle (16/11/2026)
+
+`AclAuthorizer::allows(roleCode, resource, action, technical = false)` lit les autorisations explicitement déclarées dans `symsvel_acl_rules`, sur la connexion DBAL du projet. **Absence de règle = refus**. La clé existante `(resource, action, role_code)` et les migrations initiales restent inchangées ; aucune permission n'est accordée automatiquement.
+
+Conformément aux décisions XCore/SymSvel : `ROLE_DEV` contourne tous les ACL ; `ROLE_SUPER_ADMIN` a accès aux opérations **fonctionnelles** mais pas automatiquement aux opérations marquées `technical = true` ; les autres rôles dépendent uniquement de leurs autorisations explicites. Le type d'opération est fourni par le module appelant, sans introduire de flag persistant ni redéfinir l'architecture existante. L'auteur de la requête doit d'abord être authentifié : **ce service ne réalise pas l'authentification**.
+
+Contrôles unitaires SQLite : privilèges natifs, exceptions techniques, refus par défaut, règles autorisées et refus explicites. CI et crash-tests du projet assemblé à confirmer.
