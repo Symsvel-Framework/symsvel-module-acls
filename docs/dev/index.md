@@ -135,3 +135,14 @@ technique indépendante.
 
 Correctif de syntaxe du test de surcharge : référence de classe
 `\\DomainException` corrigée vers le type PHP global attendu.
+
+
+### Ownership de la table des libellés (16/11/2026)
+
+Le manifeste `module.json` déclare maintenant aussi
+`symsvel_acl_labels` comme table appartenant à ACLs, pour que les
+inventaires/sauvegardes et la désinstallation du module tiennent compte
+de la migration additive. L'entité `AclLabelOverride` déclare les métadonnées
+ORM équivalentes à la table Schema (clé composite `resource/action`, sans
+identifiant inventé) afin de limiter les diffs `make:migration` parasites.
+Les mutations métier continuent à passer par le manager DBAL du module.
