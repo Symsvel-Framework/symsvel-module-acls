@@ -44,3 +44,33 @@ Le contrat \`Access\BoAccessGate\` reçoit la requête, la ressource et l'action
 
 L'implémentation concrète est enregistrée par le module Admins obligatoire et utilise les mécanismes existants \`AuthenticatedTokenResolver\`, \`AdminRepository\` et \`AclAuthorizer\`. Aucun bypass : un module consommateur doit systématiquement appeler \`check()\` avant lecture ou mutation et retourner une réponse sans cache. Il n'y a pas de rôle implicite supplémentaire. Tests du contrat et des contrôles réalisés côté propriétaire Admins, CI et CT à valider.
 
+
+
+## Catalogue des permissions et gestion BO (16/11/2026)
+
+`PermissionProviderInterface` permet à **chaque module** de déclarer ses
+opérations réelles (`resource`, `action`, libellé, caractère technique).
+`PermissionCatalog` agrège les providers tagués
+`symsvel.acls.permission_provider`, refuse les doublons et ne scanne pas
+les routes. Le code d'affichage d'un droit est `resource.action` ;
+l'autorisation runtime reste basée sur `AclAuthorizer` et sur la table
+immuable `symsvel_acl_rules`. Les libellés appartiennent aux providers,
+non à une table d'édition utilisateur : contrairement à l'ancien écran
+XCore, il n'existe donc pas de modification d'un libellé de droit technique
+sans modifier la déclaration du module propriétaire.
+
+Routes BO, toutes protégées par `BoAccessGate` :
+
+- `GET /apibo/acls` : catalogue déclaré, exige `acls:list`.
+- `GET /apibo/acls/roles/{ROLE_CODE}` : sélections explicites et droits
+  natifs hérités, exige `acls:list`.
+- `PUT /apibo/acls/roles/{ROLE_CODE}` avec `{ "permissions": ["admins.list", …] }` :
+  remplace atomiquement les permissions explicites du rôle, exige
+  `acls:manage` **technique**. `ROLE_DEV`, `ROLE_SUPER_ADMIN` et
+  `ROLE_USER` ne peuvent pas être réécrits via cette route.
+
+Une permission non déclarée est rejetée. Une permission absente n'est
+jamais accordée. Le développeur conserve tous les droits et le super-admin
+ses droits fonctionnels, mais ne contourne pas la protection technique
+des mutations ACL. On ne réécrit aucune migration déjà distribuée.
+Validation prévue par PHPUnit/CI, assemblage BO puis CT XT.

@@ -9,6 +9,11 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 use SymSvel\Module\Acls\Controller\AclsPingController;
+use SymSvel\Module\Acls\Controller\BoAclController;
+use SymSvel\Module\Acls\Permission\PermissionCatalog;
+use SymSvel\Module\Acls\Permission\RolePermissionManager;
+use SymSvel\Module\Acls\Permission\NativeAclPermissionProvider;
+use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
 
 final class AclsBundle extends AbstractBundle
 {
@@ -19,6 +24,15 @@ final class AclsBundle extends AbstractBundle
         $builder->register(AclsPingController::class, AclsPingController::class)
             ->setAutowired(true)
             ->addTag('controller.service_arguments');
+        $builder->register(NativeAclPermissionProvider::class, NativeAclPermissionProvider::class)
+            ->addTag('symsvel.acls.permission_provider');
+        $builder->register(PermissionCatalog::class, PermissionCatalog::class)
+            ->setArgument('$providers', new TaggedIteratorArgument('symsvel.acls.permission_provider'));
+        $builder->register(RolePermissionManager::class, RolePermissionManager::class)
+            ->setAutowired(true)
+            ->setArgument('$db', new Reference('doctrine.dbal.default_connection'));
+        $builder->register(BoAclController::class, BoAclController::class)
+            ->setAutowired(true)->addTag('controller.service_arguments');
     }
 
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
