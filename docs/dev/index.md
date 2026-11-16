@@ -131,3 +131,7 @@ en cours. `Libellé par défaut` supprime la surcharge. Les tests SQLite
 vérifient l'aller-retour de la surcharge et le refus d'une permission
 inconnue ; les modifications de droits restent soumises à la protection
 technique indépendante.
+
+
+Correctif de syntaxe du test de surcharge : référence de classe
+`\\DomainException` corrigée vers le type PHP global attendu.

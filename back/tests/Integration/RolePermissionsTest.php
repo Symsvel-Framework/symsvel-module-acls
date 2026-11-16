@@ -101,7 +101,7 @@ final class RolePermissionsTest extends TestCase
         self::assertSame('Consulter les permissions', $catalog->get('acls.list')->label);
         $labels->update('acls.list', null);
         self::assertSame([], $labels->overrides());
-        $this->expectException(\\DomainException::class);
+        $this->expectException(\DomainException::class);
         $labels->update('missing.resource', 'Unknown');
     }
 
