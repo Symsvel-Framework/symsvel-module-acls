@@ -3,6 +3,7 @@ export type BoAclPermission = {
   resource: string;
   action: string;
   label: string;
+  default_label: string;
   technical: boolean;
 };
 export type BoAclCatalogResponse = { data: BoAclPermission[]; can_manage: boolean };
@@ -26,6 +27,8 @@ const copy = {
     label: 'Permission', code: 'Code', resource: 'Module', type: 'Type', technical: 'Technique',
     functional: 'Fonctionnel', effective: 'État', granted: 'Autorisé', denied: 'Refusé',
     allow: 'Autoriser', revoke: 'Retirer', actions: 'Actions',
+    editLabel: 'Modifier le libellé', resetLabel: 'Libellé par défaut', labelUpdated: 'Libellé mis à jour.',
+    labelHint: 'Le code et le caractère technique restent définis par le module.',
     save: 'Enregistrer les droits', saving: 'Enregistrement…', cancel: 'Annuler',
     none: 'Aucune permission déclarée.', loading: 'Chargement…',
     choose: 'Sélectionnez un rôle pour afficher ses droits.',
@@ -45,6 +48,8 @@ const copy = {
     label: 'Permission', code: 'Code', resource: 'Module', type: 'Type', technical: 'Technical',
     functional: 'Functional', effective: 'Status', granted: 'Allowed', denied: 'Denied',
     allow: 'Allow', revoke: 'Revoke', actions: 'Actions',
+    editLabel: 'Edit label', resetLabel: 'Default label', labelUpdated: 'Label updated.',
+    labelHint: 'The code and technical flag remain module-owned.',
     save: 'Save permissions', saving: 'Saving…', cancel: 'Cancel',
     none: 'No declared permissions.', loading: 'Loading…',
     choose: 'Select a role to view its permissions.',

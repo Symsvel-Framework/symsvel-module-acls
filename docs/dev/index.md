@@ -120,3 +120,14 @@ Le catalogue renvoie `label` (éventuelle surcharge) et
 il n'existe aucun moyen de renommer son code. Les migrations initiales
 restent immuables ; le compilateur de migrations du Tooling doit intégrer
 cette nouvelle migration sur les projets existants.
+
+
+### Tests et interface de personnalisation des libellés (16/11/2026)
+
+La matrice ACLs possède une action `Modifier le libellé` qui ouvre la
+modale native du BO. Le code reste en lecture seule ; l'API PATCH stocke
+la surcharge et la liste se met à jour sans perdre la sélection de droits
+en cours. `Libellé par défaut` supprime la surcharge. Les tests SQLite
+vérifient l'aller-retour de la surcharge et le refus d'une permission
+inconnue ; les modifications de droits restent soumises à la protection
+technique indépendante.

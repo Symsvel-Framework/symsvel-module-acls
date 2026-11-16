@@ -4,6 +4,7 @@
   import { resolve } from '$app/paths';
   import Button from '../../../../components/Button.svelte';
   import Alert from '../../../../components/Alert.svelte';
+  import Modal from '../../../../components/Modal.svelte';
   import DataTable from '../../../../components/DataTable.svelte';
   import type { DataAction, DataColumn, SortOrder } from '../../../../components/data-table';
   import type { PageSize } from '../../../../components/pagination';
@@ -27,6 +28,10 @@
   let loading = $state(false);
   let saving = $state(false);
   let selectionLoading = $state(false);
+  let labelEditing = $state<BoAclPermission | null>(null);
+  let labelDraft = $state('');
+  let labelError = $state('');
+  let labelBusy = $state(false);
   let error = $state('');
   let notice = $state('');
   let search = $state('');
@@ -55,6 +60,11 @@
         || (inherited === 'functional' && !item.technical) ? t.granted : t.denied }
   ]);
   const actions = $derived<DataAction<BoAclPermission>[]>([
+    {
+      key: 'edit-label', label: t.editLabel,
+      disabled: () => !canManage || labelBusy,
+      onClick: (item) => openLabel(item)
+    },
     {
       key: 'toggle',
       label: (item) => chosen.includes(item.code) ? t.revoke : t.allow,
@@ -149,6 +159,34 @@
     }
   }
 
+  function openLabel(item: BoAclPermission): void {
+    if (!canManage) return;
+    labelEditing = item;
+    labelDraft = item.label;
+    labelError = '';
+  }
+
+  async function sendLabel(value: string | null): Promise<void> {
+    if (!labelEditing || labelBusy || !canManage) return;
+    const item = labelEditing;
+    labelBusy = true;
+    labelError = '';
+    try {
+      await boApi<unknown>(
+        `/apibo/acls/labels/${encodeURIComponent(item.resource)}/${encodeURIComponent(item.action)}`,
+        { method: 'PATCH', body: JSON.stringify({ label: value }) }
+      );
+      const label = value === null ? item.default_label : value.trim();
+      catalogue = catalogue.map((entry) => entry.code === item.code ? { ...entry, label } : entry);
+      labelEditing = null;
+      notice = t.labelUpdated;
+    } catch (cause) {
+      labelError = explain(cause);
+    } finally {
+      labelBusy = false;
+    }
+  }
+
   onMount(() => { void load(); });
 </script>
 
@@ -198,6 +236,23 @@
       </Button>
     </div>
   </section>
+
+  <Modal open={labelEditing !== null} title={t.editLabel} onClose={() => labelEditing = null}>
+    {#if labelEditing}
+      <p>{t.labelHint}</p>
+      <p><code>{labelEditing.code}</code></p>
+      {#if labelError}<Alert kind="error">{labelError}</Alert>{/if}
+      <form class="label-form" onsubmit={(event) => { event.preventDefault(); void sendLabel(labelDraft); }}>
+        <label for="acl-label">{t.label}</label>
+        <input id="acl-label" bind:value={labelDraft} maxlength="150" required />
+        <div class="label-actions">
+          <Button type="button" variant="secondary" onclick={() => void sendLabel(null)}
+            disabled={labelBusy || labelEditing.label === labelEditing.default_label}>{t.resetLabel}</Button>
+          <Button type="submit" disabled={labelBusy}>{labelBusy ? t.saving : t.save}</Button>
+        </div>
+      </form>
+    {/if}
+  </Modal>
 </div>
 
 <style>
@@ -210,4 +265,8 @@
   .role-selection select { padding: 10px; border: 1px solid #ccd4df; border-radius: 8px; font: inherit; min-width: 250px; max-width: 100%; }
   .hint { font-size: .85rem; }
   .actions { display: flex; justify-content: flex-end; gap: 10px; padding-top: 20px; }
+  .label-form { display: grid; gap: 10px; }
+  .label-form label { font-weight: 700; }
+  .label-form input { padding: 11px; font: inherit; border: 1px solid #ccd4df; border-radius: 8px; }
+  .label-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
 </style>

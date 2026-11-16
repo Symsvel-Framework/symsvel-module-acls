@@ -16,6 +16,7 @@ use SymSvel\Module\Acls\Permission\PermissionCatalog;
 use SymSvel\Module\Acls\Permission\PermissionDefinition;
 use SymSvel\Module\Acls\Permission\PermissionProviderInterface;
 use SymSvel\Module\Acls\Permission\RolePermissionManager;
+use SymSvel\Module\Acls\Permission\PermissionLabelManager;
 
 final class RolePermissionsTest extends TestCase
 {
@@ -61,6 +62,7 @@ final class RolePermissionsTest extends TestCase
         $db->executeStatement('CREATE TABLE symsvel_roles (code VARCHAR(100) PRIMARY KEY)');
         $db->insert('symsvel_roles', ['code' => 'ROLE_ADMIN']);
         $db->executeStatement('CREATE TABLE symsvel_acl_rules (id INTEGER PRIMARY KEY AUTOINCREMENT, resource VARCHAR(150), action VARCHAR(100), role_code VARCHAR(100), allowed BOOLEAN)');
+        $db->executeStatement('CREATE TABLE symsvel_acl_labels (resource VARCHAR(150), action VARCHAR(100), label VARCHAR(150), PRIMARY KEY(resource, action))');
         $gate = new class implements BoAccessGate {
             public function check(Request $request, string $resource, string $action): BoAccessDecision {
                 if (!$request->headers->has('Authorization')) return new BoAccessDecision(401);
@@ -68,7 +70,11 @@ final class RolePermissionsTest extends TestCase
             }
         };
         $catalog = new PermissionCatalog([new NativeAclPermissionProvider()]);
-        $controller = new BoAclController($gate, new AclAuthorizer($db), $catalog, new RolePermissionManager($db, $catalog));
+        $controller = new BoAclController(
+            $gate, new AclAuthorizer($db), $catalog,
+            new RolePermissionManager($db, $catalog),
+            new PermissionLabelManager($db, $catalog),
+        );
         self::assertSame(401, $controller->catalog(Request::create('/apibo/acls'))->getStatusCode());
         $get = Request::create('/apibo/acls', 'GET', [], [], [], ['HTTP_AUTHORIZATION' => 'Bearer some-token']);
         self::assertSame(200, $controller->catalog($get)->getStatusCode());
@@ -77,6 +83,26 @@ final class RolePermissionsTest extends TestCase
             ['HTTP_AUTHORIZATION' => 'Bearer some-token', 'CONTENT_TYPE' => 'application/json'],
             '{"permissions":["acls.manage"]}');
         self::assertSame(403, $controller->update($put, 'ROLE_ADMIN')->getStatusCode());
+        $labelRequest = Request::create('/apibo/acls/labels/acls/list', 'PATCH', [], [], [],
+            ['HTTP_AUTHORIZATION' => 'Bearer some-token', 'CONTENT_TYPE' => 'application/json'],
+            '{"label":"Label override"}');
+        self::assertSame(403, $controller->updateLabel($labelRequest, 'acls', 'list')->getStatusCode());
+    }
+
+    public function testLabelOverrideCanBeResetWithoutChangingDeclaredCode(): void
+    {
+        if (!extension_loaded('pdo_sqlite')) self::markTestSkipped('pdo_sqlite required.');
+        $db = DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true]);
+        $db->executeStatement('CREATE TABLE symsvel_acl_labels (resource VARCHAR(150), action VARCHAR(100), label VARCHAR(150), PRIMARY KEY(resource, action))');
+        $catalog = new PermissionCatalog([new NativeAclPermissionProvider()]);
+        $labels = new PermissionLabelManager($db, $catalog);
+        $labels->update('acls.list', '  Gestion des accès  ');
+        self::assertSame('Gestion des accès', $labels->overrides()['acls.list']);
+        self::assertSame('Consulter les permissions', $catalog->get('acls.list')->label);
+        $labels->update('acls.list', null);
+        self::assertSame([], $labels->overrides());
+        $this->expectException(\\DomainException::class);
+        $labels->update('missing.resource', 'Unknown');
     }
 
     public function testDuplicatePermissionDeclarationFailsClosed(): void
