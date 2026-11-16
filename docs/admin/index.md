@@ -19,3 +19,13 @@ Les libellés proviennent du module propriétaire et ne sont pas éditables
 par l'administrateur : c'est une différence voulue avec le prototype XCore,
 car un label déclaré par un module ne doit pas être modifié globalement
 sans contrat de traduction. CI BO et CT XT requis.
+
+
+### Modification du libellé d'une permission
+
+Comme dans XCore, le libellé affiché peut être personnalisé par un
+administrateur ayant le droit technique `acls.manage` ; le code et le
+caractère technique du droit restent déclarés par le module propriétaire.
+Le libellé par défaut est rétabli en supprimant la surcharge. Les
+modifications s'appliquent aux tableaux ACLs et à la sélection des droits
+dans Roles. Migration Schema additive et CT multi-SGBD requis.

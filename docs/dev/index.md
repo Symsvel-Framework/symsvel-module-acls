@@ -103,3 +103,20 @@ la structure de synchronisation Tooling. Les validations TypeScript,
 Svelte, Prettier, ESLint, build statique et Vitest s'exécutent sur
 l'assemblage, pas uniquement sur un fichier isolé. Le crash-test XT
 reste nécessaire pour les API, les ACL et la navigation réelle.
+
+
+### Libellés ACL personnalisables (16/11/2026)
+
+Le comportement XCore de modification du seul libellé est repris sans
+transformer les codes techniques déclarés par les modules en données
+mutables. La migration **additive Schema** `Version20261116000201` crée
+`symsvel_acl_labels(resource, action, label)`, clé primaire composite.
+Le catalogue renvoie `label` (éventuelle surcharge) et
+`default_label` (déclaration du module).
+
+`PATCH /apibo/acls/labels/{resource}/{action}` avec
+`{ "label": "Libellé local" }` exige `acls:manage` technique. Une valeur
+`null` rétablit le libellé par défaut. Une permission inconnue est refusée ;
+il n'existe aucun moyen de renommer son code. Les migrations initiales
+restent immuables ; le compilateur de migrations du Tooling doit intégrer
+cette nouvelle migration sur les projets existants.

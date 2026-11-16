@@ -11,6 +11,7 @@ use SymSvel\Module\Acls\AclAuthorizer;
 use SymSvel\Module\Acls\Access\BoAccessGate;
 use SymSvel\Module\Acls\Permission\PermissionCatalog;
 use SymSvel\Module\Acls\Permission\RolePermissionManager;
+use SymSvel\Module\Acls\Permission\PermissionLabelManager;
 
 /** BO-only, ACL-gated management of module-declared permissions. */
 final readonly class BoAclController
@@ -20,6 +21,7 @@ final readonly class BoAclController
         private AclAuthorizer $authorizer,
         private PermissionCatalog $catalog,
         private RolePermissionManager $grants,
+        private PermissionLabelManager $labels,
     ) {}
 
     #[Route('/apibo/acls', name: 'symsvel_acls_bo_catalog', methods: ['GET'], format: 'json')]
@@ -29,13 +31,38 @@ final readonly class BoAclController
         $decision = $this->gate->check($request, 'acls', 'manage');
         $canManage = $decision->allowed()
             && $this->authorizer->allows((string) $decision->roleCode, 'acls', 'manage', true);
+        $overrides = $this->labels->overrides();
         return self::respond(['can_manage' => $canManage, 'data' => array_map(static fn ($permission) => [
             'code' => $permission->code(),
             'resource' => $permission->resource,
             'action' => $permission->action,
-            'label' => $permission->label,
+            'label' => $overrides[$permission->code()] ?? $permission->label,
+            'default_label' => $permission->label,
             'technical' => $permission->technical,
         ], $this->catalog->all())]);
+    }
+
+    #[Route('/apibo/acls/labels/{resource}/{action}', name: 'symsvel_acls_bo_label_update', methods: ['PATCH'], format: 'json')]
+    public function updateLabel(Request $request, string $resource, string $action): JsonResponse
+    {
+        $decision = $this->gate->check($request, 'acls', 'manage');
+        if (!$decision->allowed()) return self::failure($decision->status);
+        if (!$this->authorizer->allows((string) $decision->roleCode, 'acls', 'manage', true)) {
+            return self::failure(403);
+        }
+        $payload = self::payload($request);
+        if ($payload instanceof JsonResponse) return $payload;
+        if (array_keys($payload) !== ['label'] || ($payload['label'] !== null && !is_string($payload['label']))) {
+            return self::failure(400);
+        }
+        try {
+            $this->labels->update($resource.'.'.$action, $payload['label']);
+        } catch (\InvalidArgumentException) {
+            return self::failure(400);
+        } catch (\DomainException) {
+            return self::failure(404);
+        }
+        return self::respond(['status' => 'updated']);
     }
 
     #[Route('/apibo/acls/roles/{code}', name: 'symsvel_acls_bo_role_read', requirements: ['code' => 'ROLE_[A-Z][A-Z0-9_]*'], methods: ['GET'], format: 'json')]

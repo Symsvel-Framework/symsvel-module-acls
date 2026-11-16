@@ -12,6 +12,7 @@ use SymSvel\Module\Acls\Controller\AclsPingController;
 use SymSvel\Module\Acls\Controller\BoAclController;
 use SymSvel\Module\Acls\Permission\PermissionCatalog;
 use SymSvel\Module\Acls\Permission\RolePermissionManager;
+use SymSvel\Module\Acls\Permission\PermissionLabelManager;
 use SymSvel\Module\Acls\Permission\NativeAclPermissionProvider;
 use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
 
@@ -29,6 +30,9 @@ final class AclsBundle extends AbstractBundle
         $builder->register(PermissionCatalog::class, PermissionCatalog::class)
             ->setArgument('$providers', new TaggedIteratorArgument('symsvel.acls.permission_provider'));
         $builder->register(RolePermissionManager::class, RolePermissionManager::class)
+            ->setAutowired(true)
+            ->setArgument('$db', new Reference('doctrine.dbal.default_connection'));
+        $builder->register(PermissionLabelManager::class, PermissionLabelManager::class)
             ->setAutowired(true)
             ->setArgument('$db', new Reference('doctrine.dbal.default_connection'));
         $builder->register(BoAclController::class, BoAclController::class)
