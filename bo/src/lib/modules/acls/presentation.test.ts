@@ -10,6 +10,7 @@ describe('BO ACLs', () => {
   it('has bilingual labels and filters only declared permissions', () => {
     expect(aclCopy('fr').title).toBe('ACL');
     expect(aclCopy('en').title).toBe('ACLs');
+    expect(aclCopy('de-DE').title).toBe('ACL');
     const rows: BoAclPermission[] = [
       { code: 'admins.list', resource: 'admins', action: 'list', label: 'Liste administrateurs', default_label: 'Liste administrateurs', technical: false },
       { code: 'roles.assign:ROLE_ADMIN', resource: 'roles', action: 'assign:ROLE_ADMIN', label: 'Attribution', default_label: 'Attribution', technical: true }
