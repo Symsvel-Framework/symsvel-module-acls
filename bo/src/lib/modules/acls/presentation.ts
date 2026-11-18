@@ -1,3 +1,5 @@
+import { generatedTranslation } from '../../i18n/generated-translations';
+
 export type BoAclPermission = {
   code: string;
   resource: string;
@@ -65,5 +67,8 @@ const copy = {
 };
 export type AclCopy = typeof copy.fr;
 export function aclCopy(language: string | null): AclCopy {
-  return language?.toLowerCase().split('-')[0] === 'en' ? copy.en : copy.fr;
+  const base = language?.toLowerCase().split('-')[0] === 'en' ? copy.en : copy.fr;
+  return Object.fromEntries(Object.entries(base).map(([key, value]) => [
+    key, generatedTranslation(language, 'bo.acls.' + key) ?? value
+  ])) as AclCopy;
 }

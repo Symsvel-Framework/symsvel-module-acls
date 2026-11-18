@@ -168,3 +168,8 @@ la réflexion de `ClassMetadata` sous Doctrine ORM 3. Aucun accès à XT.
 Les libellés intégrés de l'interface sont sélectionnés à partir de la langue d'interface (code ISO du navigateur ou du compte). Lorsque la locale n'a pas de dictionnaire intégré, les libellés français sont utilisés ; l'anglais reste disponible explicitement pour `en`. Le fallback ne modifie ni la langue ISO du site ni celle du compte et n'impose pas l'existence de traductions avant l'installation. Le repli doit être réalisé à la clé lors de l'introduction des dictionnaires dynamiques ; l'éditeur BO des traductions et le chargement fichier/BDD ne sont pas fournis par cette seule correction.
 
 Vérifications : tests de sélection FR/EN/autres locales et tests de build/CI. La validation finale nécessite les crash-tests locaux sur le parcours Setup, BO et App.
+
+
+## Dictionnaires BO (18/11/2026)
+
+Le module ACLs fournit `bo/src/lib/translations/fr.ts` et `en.ts`. Tooling les copie sous `bo/src/lib/translations/acls/<lang>.ts` et enregistre les clés `bo.acls.<clé>` dans Languages après les migrations. Les surcharges de l'administrateur ont priorité. Validation CI et CT XT nécessaire.
