@@ -32,3 +32,10 @@ dans Roles. Migration Schema additive et CT multi-SGBD requis.
 ### Normalisation Design System BO (19/11/2026)
 
 Le tableau ACL conserve `DataTable`, `Pagination` et l'attribution des droits par rôle, sans modification des permissions. Le sélecteur des rôles utilise désormais le `Dropdown` commun du BO HP (libellé, code, clavier et thème) et reste lié à la fonction existante `selectRole` sans reload de page. Surfaces, bordures, textes secondaires, formulaire de libellé et focus utilisent les jetons CSS `--bo-*`. Les ACL du serveur restent l'unique autorité sur les mutations ; CI et CT XT en clair/sombre requis.
+
+### Conventions de couleur des actions (19/11/2026)
+
+Autoriser est une action positive verte, révoquer un droit réversible est orange. Les validations de modifications sont vertes ; les droits restent contrôlés côté API.
+La finalité est portée par `DataAction.variant` et `Button.variant`, pas par le libellé traduit.
+Les jetons et le thème clair/sombre restent dans le Design System BO.
+Voir `symsvel-bo/docs/dev/bo-components.md`. Tests CI et CT XT nécessaires.

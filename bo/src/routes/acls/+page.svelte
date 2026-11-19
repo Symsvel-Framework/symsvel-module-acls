@@ -68,6 +68,7 @@
     },
     {
       key: 'toggle',
+      variant: (item) => chosen.includes(item.code) ? 'warning' : 'success',
       label: (item) => chosen.includes(item.code) ? t.revoke : t.allow,
       disabled: () => !canEdit || selectionLoading || saving,
       onClick: (item) => toggle(item.code)
@@ -234,7 +235,7 @@
     <div class="actions">
       <Button type="button" variant="secondary" onclick={() => chosen = [...saved]}
         disabled={!canEdit || !dirty || saving}>{t.cancel}</Button>
-      <Button type="button" onclick={save} disabled={!canEdit || !dirty || saving || selectionLoading}>
+      <Button type="button" variant="success" onclick={save} disabled={!canEdit || !dirty || saving || selectionLoading}>
         {saving ? t.saving : t.save}
       </Button>
     </div>
@@ -251,7 +252,7 @@
         <div class="label-actions">
           <Button type="button" variant="secondary" onclick={() => void sendLabel(null)}
             disabled={labelBusy || labelEditing.label === labelEditing.default_label}>{t.resetLabel}</Button>
-          <Button type="submit" disabled={labelBusy}>{labelBusy ? t.saving : t.save}</Button>
+          <Button type="submit" variant="success" disabled={labelBusy}>{labelBusy ? t.saving : t.save}</Button>
         </div>
       </form>
     {/if}
