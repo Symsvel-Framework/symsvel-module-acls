@@ -28,3 +28,7 @@ caractère technique du droit restent déclarés par le module propriétaire.
 Le libellé par défaut est rétabli en supprimant la surcharge. Les
 modifications s'appliquent aux tableaux ACLs et à la sélection des droits
 dans Roles. Migration Schema additive et CT multi-SGBD requis.
+
+### Normalisation Design System BO (19/11/2026)
+
+Le tableau ACL conserve `DataTable`, `Pagination` et l'attribution des droits par rôle, sans modification des permissions. Le sélecteur des rôles utilise désormais le `Dropdown` commun du BO HP (libellé, code, clavier et thème) et reste lié à la fonction existante `selectRole` sans reload de page. Surfaces, bordures, textes secondaires, formulaire de libellé et focus utilisent les jetons CSS `--bo-*`. Les ACL du serveur restent l'unique autorité sur les mutations ; CI et CT XT en clair/sombre requis.

@@ -6,6 +6,7 @@
   import Alert from '../../../../components/Alert.svelte';
   import Modal from '../../../../components/Modal.svelte';
   import DataTable from '../../../../components/DataTable.svelte';
+  import Dropdown from '../../../../components/Dropdown.svelte';
   import type { DataAction, DataColumn, SortOrder } from '../../../../components/data-table';
   import type { PageSize } from '../../../../components/pagination';
   import { ApiError } from '../../../../api/client';
@@ -200,14 +201,16 @@
   {#if notice}<Alert kind="success">{notice}</Alert>{/if}
   <section class="panel">
     <div class="role-selection">
-      <label for="acl-role">{t.role}</label>
-      <select id="acl-role" value={role} onchange={(event) => selectRole(event.currentTarget.value)}
-        disabled={loading || selectionLoading}>
-        <option value="" disabled>{t.selectRole}</option>
-        {#each roles as item (item.id)}
-          <option value={item.code}>{item.label} ({item.code})</option>
-        {/each}
-      </select>
+      <span class="role-selection-label">{t.role}</span>
+      <div class="role-dropdown">
+        <Dropdown value={role}
+          options={[
+            { value: '', label: t.selectRole },
+            ...roles.map((item) => ({ value: item.code, label: item.label, code: item.code }))
+          ]}
+          label={t.role} onChange={(value) => { void selectRole(value); }}
+          disabled={loading || selectionLoading} />
+      </div>
     </div>
 
     {#if inherited === 'all'}<Alert kind="info">{t.allInherited}</Alert>{/if}
@@ -258,15 +261,16 @@
 <style>
   .acls-page { max-width: 1200px; margin: auto; display: grid; gap: 20px; }
   .page-heading { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; }
-  h1 { margin: 0; } p { color: #667085; }
-  .panel { padding: 24px; background: #fff; border: 1px solid #e2e7ee; border-radius: 14px; min-width: 0; }
+  h1 { margin: 0; } p { color: var(--bo-muted); }
+  .panel { padding: 24px; background: var(--bo-surface); color: var(--bo-text); border: 1px solid var(--bo-border); border-radius: 14px; min-width: 0; }
   .role-selection { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
-  .role-selection label { font-weight: 700; }
-  .role-selection select { padding: 10px; border: 1px solid #ccd4df; border-radius: 8px; font: inherit; min-width: 250px; max-width: 100%; }
+  .role-selection-label { font-weight: 700; }
+  .role-dropdown { flex: 0 1 320px; min-width: min(100%, 260px); }
   .hint { font-size: .85rem; }
   .actions { display: flex; justify-content: flex-end; gap: 10px; padding-top: 20px; }
   .label-form { display: grid; gap: 10px; }
   .label-form label { font-weight: 700; }
-  .label-form input { padding: 11px; font: inherit; border: 1px solid #ccd4df; border-radius: 8px; }
+  .label-form input { padding: 11px; font: inherit; border: 1px solid var(--bo-border); border-radius: 8px; background: var(--bo-input); color: var(--bo-text); min-width: 0; }
+  .label-form input:focus-visible { outline: 2px solid var(--bo-focus); outline-offset: 2px; }
   .label-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
 </style>
