@@ -11,3 +11,47 @@ jobs:
           php -r 'if (PHP_VERSION_ID < 80400 || PHP_VERSION_ID >= 80500) { exit(1); }'
       - run: composer install --no-interaction --prefer-dist
       - run: composer qa
+
+
+  bo-integration:
+    runs-on: [self-hosted, linux, ARM64, symsvel]
+    steps:
+      - name: Checkout acls module
+        uses: actions/checkout@v4
+      - name: Checkout BO host on dev
+        uses: actions/checkout@v4
+        with:
+          repository: Symsvel-Framework/symsvel-bo
+          ref: dev
+          path: assembled-bo
+          token: ${{ secrets.SYMSVEL_READ_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: assembled-bo/package-lock.json
+      - name: Assemble acls routes like Tooling
+        run: |
+          mkdir -p assembled-bo/src/lib/modules/acls/routes/acls
+          mkdir -p assembled-bo/src/routes/acls
+          cp bo/src/lib/modules/acls/*.ts assembled-bo/src/lib/modules/acls/
+          cp bo/src/routes/acls/+page.svelte assembled-bo/src/lib/modules/acls/routes/acls/+page.svelte
+          cat > assembled-bo/src/routes/acls/+page.svelte <<'ROUTE'
+          <script lang="ts">
+            import ModulePage from '#lib/modules/acls/routes/acls/+page.svelte';
+          </script>
+          <ModulePage />
+          ROUTE
+      - name: Install BO dependencies
+        working-directory: assembled-bo
+        run: npm ci --no-audit --no-fund
+      - name: Format assembled BO (same convention as BO CI)
+        working-directory: assembled-bo
+        run: npm run format
+      - name: Validate assembled BO types, style, build and tests
+        working-directory: assembled-bo
+        run: |
+          npm run check
+          npm run lint
+          npm run build
+          npm run test:unit -- --run

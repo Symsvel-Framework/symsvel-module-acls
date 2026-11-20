@@ -3,7 +3,8 @@
     "name": "Acls",
     "dependencies": {},
     "tables": [
-        "symsvel_acl_rules"
+        "symsvel_acl_rules",
+        "symsvel_acl_labels"
     ],
     "components": {
         "back": "back",
