@@ -173,3 +173,7 @@ Vérifications : tests de sélection FR/EN/autres locales et tests de build/CI. 
 ## Dictionnaires BO (18/11/2026)
 
 Le module ACLs fournit `bo/src/lib/translations/fr.ts` et `en.ts`. Tooling les copie sous `bo/src/lib/translations/acls/<lang>.ts` et enregistre les clés `bo.acls.<clé>` dans Languages après les migrations. Les surcharges de l'administrateur ont priorité. Validation CI et CT XT nécessaire.
+
+## Branding et sécurité
+
+Les écrans du module lisent le nom public via `getProjectBrand()` du BO et affichent `$brandName`. Le layout effectue la requête ; le module ne crée ni état ni requête indépendante. L'intégration est vérifiée par la QA ; le CT doit vérifier les titres avec un nom de projet personnalisé. La QA PHP exécute également `composer audit --locked` après installation, sans exclusion d'avis.

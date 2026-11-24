@@ -16,6 +16,7 @@ jobs:
           php -v
           php -r 'if (PHP_VERSION_ID < 80400 || PHP_VERSION_ID >= 80500) { exit(1); }'
       - run: composer install --no-interaction --prefer-dist
+      - run: composer audit --locked
       - run: composer qa
 
 
@@ -28,7 +29,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Symsvel-Framework/symsvel-bo
-          ref: dev
+          ref: main
           path: assembled-bo
           token: ${{ github.token }}
       - uses: actions/setup-node@v4
