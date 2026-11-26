@@ -37,3 +37,8 @@ if (!$decision->allowed()) {
 ~~~
 
 Importez SymSvel\Core\Http\ApiResponse. Le gate renvoie 401 en l'absence d'identité et 403 en l'absence de droit. Ne vous fiez jamais uniquement à l'affichage conditionnel d'un bouton dans Svelte.
+
+
+### Scopes natifs
+
+Back et BO uniquement. Les interfaces d’administration sont exclusivement dans le BO. Les anciennes routes de test App/Front ne sont plus distribuées.
